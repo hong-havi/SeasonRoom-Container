@@ -1,6 +1,6 @@
-[submodule "Source/SeasonRoom-Backend"]
-	path = Source/SeasonRoom-Backend
+[submodule "Source/Backend"]
+	path = Source/Backend
 	url = https://github.com/hong-havi/SeasonRoom-Backend
-[submodule "Source/SeasonRoom-Frontend"]
-	path = Source/SeasonRoom-Frontend
+[submodule "Source/Frontend"]
+	path = Source/Frontend
 	url = https://github.com/hong-havi/SeasonRoom-Frontend.git
