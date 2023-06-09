@@ -1,0 +1,50 @@
+## 소스 모듈 설치 ##
+FROM node:20 as app-install-dependencies
+
+WORKDIR /data/sr-api
+
+# Update npm
+RUN npm install -g npm@9.6.4
+
+# package.json copy
+COPY ./source/SR-Backend/package.json ./source/SR-Backend/package-lock.json ./
+RUN npm ci
+
+
+## 소스 빌드 ##
+FROM node:20 as app-build
+
+WORKDIR /data/sr-api
+
+# Update npm
+RUN npm install -g npm@9.6.4
+# 소스 copy
+COPY --from=app-install-dependencies /data/sr-api/node_modules ./node_modules
+COPY ./source/SR-Backend ./
+RUN npm run build
+
+
+## 실행 이미지 ##
+FROM node:20 as app-run
+
+# Update npm
+RUN npm install -g npm@9.6.4
+# 설정 변경
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+# APP ENV
+ENV UV_THREADPOOL_SIZE=25
+
+USER node
+WORKDIR /data/sr-api
+
+# 앱 소스 copy
+COPY --chown=node:node --from=app-install-dependencies /data/sr-api/node_modules ./node_modules
+COPY --chown=node:node --from=app-build /data/sr-api/dist ./dist
+COPY --chown=node:node ./source/package.json ./ 
+
+# RUN npm prune --production
+
+EXPOSE 3101
+
+CMD ["npm", "run", "start:prod"]

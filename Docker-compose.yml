@@ -1,0 +1,56 @@
+version: '3.9'
+
+services:
+  web:
+    container_name: sessonroom-web
+    build:
+      context: .
+      dockerfile: ./dockerfile/Dockerfile-WEB
+    ports:
+      - 3101:3000
+    env_file:
+      - ./Secrets/${ENV}/web/env
+    environment:
+      - PORT=3000
+      - NODE_MAX_OLD_SPACE_SIZE=450
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 300M
+    restart: always
+    networks:
+      - sessonroom
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+  api:
+    container_name: sessonroom-api
+    build:
+      context: .
+      dockerfile: ./dockerfile/Dockerfile-API
+    ports:
+      - 3101:3101
+    env_file:
+      - ./Secrets/${ENV}/api/env
+    environment:
+      - PORT=3101
+      - NODE_MAX_OLD_SPACE_SIZE=450
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 300M
+    restart: always
+    networks:
+      - sessonroom
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "2"
+
+networks:
+  sessonroom:
