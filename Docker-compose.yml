@@ -17,7 +17,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 300M
+          memory: 300M 
     restart: always
     networks:
       - sessonroom
